@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 async function handleGetAllUser(req, res) {
     try {
@@ -26,6 +27,7 @@ async function handleCreateUser(req, res) {
             first_name: body.first_name,
             last_name: body.last_name,
             email: body.email,
+            password: bcrypt.hashSync(body.password, 10),
             gender: body.gender,
             job_title: body.job_title,
         });

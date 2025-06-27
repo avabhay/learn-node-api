@@ -3,6 +3,10 @@ const express = require('express');
 const { connectMongoDb } = require('./config/database');
 const userRouter = require('./routes/user');
 // const {logReqRes} = require('./controllers/middlewares');
+const {restrictToLoggedInUserOnly} = require("./controllers/middlewares/auth.js");
+const { handleUserLogin } = require('./controllers/login');
+const bodyParser = require('body-parser');
+
 
 const app = express()
 
@@ -19,10 +23,12 @@ connectMongoDb('mongodb://localhost:27017/node_test_proj').then(() => {
 
 // // Miiddleware
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // app.use(logReqRes('log.txt'));
 
 // //Router
-app.use('/api/users', userRouter);
+app.post('/api/login', handleUserLogin);
+app.use('/api/users',restrictToLoggedInUserOnly, userRouter);
 
 
 app.listen(port, hostname, () => {
